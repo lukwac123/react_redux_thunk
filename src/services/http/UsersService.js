@@ -1,21 +1,24 @@
-import routes from"./../../api";
-import { fetchUsersInProgres, fetchUsersSuccess, fetchUsersError } from "../../actions/usersAction";
+import routes from "./../../api";
+import { fetchUsersInProgress, fetchUsersSucces, fetchUsersError } from "../../actions/usersAction";
 
 const fetchAllUsers = () => {
     return dispatch => {
-        dispatch(fetchUsersInProgres());
-        fetch(routes.server + routes.route.api.users.get)
-        .then(res => res.json())
-        .then(res => {
-            if (res.error) {
-                throw res.error;
-            }
-            dispatch(fetchUsersSuccess(res.data));
-            return res.users;
-        })
-        .catch(error => {
-            dispatch(fetchUsersError(error));
-        });
+        dispatch(fetchUsersInProgress());
+        fetch(routes.server + routes.route.api.users.get, {
+    headers: routes.headers
+})
+.then(res => {
+    console.log("Status odpowiedzi:", res.status);
+    return res.json();
+})
+.then(res => {
+    console.log("Odpowiedź API:", res);
+    dispatch(fetchUsersSucces(res.data));
+})
+.catch(error => {
+    console.log("Błąd fetch:", error);
+    dispatch(fetchUsersError(error.toString()));
+});
     };
 };
 
